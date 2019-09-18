@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pid_file="/tmp/blackvue.pid"
+pid_file="/tmp/blackvue.pid";
 /opt/bin/find $pid_file -type f -mtime +2 -exec rm {} \;
 
 if [ -f $pid_file ]; then
@@ -11,9 +11,9 @@ fi
 touch $pid_file
 
 cd /share/MD0_DATA/Recordings/blackvue/
-IPADDRESS="BLACKVUE_IP_ADDRESS_HERE"
+IPADDRESS="192.168.88.60"
 re="([0-9]+_[0-9]+_[E,M])"
-re2="([0-9]+_[0-9]+_[P,N])"
+re2="([0-9]+_[0-9]+_[P,N,M,E])"
 
 # Sort function
 Sort()
@@ -31,7 +31,7 @@ FILENAMES=()
 file_previous_1=""
 file_previous_2=""
 
-for file in `curl http://$IPADDRESS/blackvue_vod.cgi | sed 's/^n://' | sed 's/F.mp4//' | sed 's/R.mp4//' | sed 's/,s:1000000//' | sed $'s/\r//'`;
+for file in `curl -s http://$IPADDRESS/blackvue_vod.cgi | sed 's/^n://' | sed 's/F.mp4//' | sed 's/R.mp4//' | sed 's/,s:1000000//' | sed $'s/\r//'`;
 do
   # echo $file
   FILENAMES+=($file)
@@ -39,13 +39,15 @@ done
 
 SORTEDFILENAMES=$(Sort ${FILENAMES[@]});
 
-for file in "${SORTEDFILENAMES[@]}";
+for file2 in ${SORTEDFILENAMES[@]};
 do
-  echo -e "SORTED: "$file\n
   file_previous_2=$file_previous_1;
-  file_previous_1=$file;
+  file_previous_1=$file2;
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  # echo $timestamp ": Checking: "$file >> /tmp/blackvue.log;
+  # echo $file2 
+  # echo $file_previous1
+  # echo $file_previous2
+  echo $timestamp ": Checking: "$file >> /tmp/blackvue.log;
 
   if [[ $file =~ $re ]]; then
     echo $timestamp ": Downloading: "$file >> /tmp/blackvue.log;
