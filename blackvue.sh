@@ -11,7 +11,7 @@ fi
 touch $pid_file
 
 cd /share/MD0_DATA/Recordings/blackvue/
-IPADDRESS="192.168.88.60"
+IPADDRESS="BLACKVUE_IPADDRESS_HERE"
 re="([0-9]+_[0-9]+_[E,M])"
 re2="([0-9]+_[0-9]+_[P,N,M,E])"
 
@@ -39,24 +39,24 @@ done
 
 SORTEDFILENAMES=$(Sort ${FILENAMES[@]});
 
-for file2 in ${SORTEDFILENAMES[@]};
+for dlfile in ${SORTEDFILENAMES[@]};
 do
   file_previous_2=$file_previous_1;
-  file_previous_1=$file2;
+  file_previous_1=$dlfile;
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  # echo $file2 
+  # echo $dlfile
   # echo $file_previous1
   # echo $file_previous2
-  echo $timestamp ": Checking: "$file >> /tmp/blackvue.log;
+  echo $timestamp ": Checking: "$dlfile >> /tmp/blackvue.log;
 
-  if [[ $file =~ $re ]]; then
-    echo $timestamp ": Downloading: "$file >> /tmp/blackvue.log;
-    wget -c http://$IPADDRESS$file\F.mp4;
-    wget -c http://$IPADDRESS$file\R.mp4;
-    wget -nc http://$IPADDRESS$file\F.thm;
-    wget -nc http://$IPADDRESS$file\R.thm;
-    wget -nc http://$IPADDRESS$file.gps;
-    wget -nc http://$IPADDRESS$file.3gf;
+  if [[ $dlfile =~ $re ]]; then
+    echo $timestamp ": Downloading: "$dlfile >> /tmp/blackvue.log;
+    wget -c http://$IPADDRESS$dlfile\F.mp4;
+    wget -c http://$IPADDRESS$dlfile\R.mp4;
+    wget -nc http://$IPADDRESS$dlfile\F.thm;
+    wget -nc http://$IPADDRESS$dlfile\R.thm;
+    wget -nc http://$IPADDRESS$dlfile.gps;
+    wget -nc http://$IPADDRESS$dlfile.3gf;
 
     if [[ $file_previous_2 =~ $re2 ]]; then
       echo $timestamp ": Downloading: "$file_previous_2 >> /tmp/blackvue.log;
